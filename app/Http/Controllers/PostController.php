@@ -24,4 +24,24 @@ class PostController extends Controller
         $post = Post::create($request->all());
         return redirect()->route('posts.index');
     }
+
+    public function show(Request $request)
+    {
+        $post = Post::where('id', $request->id)->first();
+        if (!$post) {
+            return redirect()->route('posts.index');
+        }
+        return view('admin.posts.show', compact('post'));
+    }
+
+    public function delete(Request $request)
+    {
+        $post = Post::where('id', $request->id)->first();
+        if (!$post)
+            return redirect()->route('posts.index');
+        $post->delete();
+        return redirect()
+                ->route('posts.index')
+                ->with('message', 'Post Deletado com Sucesso!');
+    }
 }
