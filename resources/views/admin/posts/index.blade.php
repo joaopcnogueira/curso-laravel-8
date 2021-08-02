@@ -1,33 +1,36 @@
-<a href="{{ route('posts.index') }}">Home</a>
-<a href="{{ route('posts.create') }}">Criar Post</a>
-<hr>
+@extends('admin.layouts.app')
 
-@if (session('message'))
-    <div>
-        {{ session('message') }}
-    </div>
-@endif
+@section('title', 'Listagem dos Posts')
 
-<form action="{{ route('posts.search') }}" method="post">
-    @csrf
-    <input type="text" name="search" placeholder="Pesquisar">
-    <button type="submit">Pesquisar</button>
-</form>
+@section('content')
+    @if (session('message'))
+        <div>
+            {{ session('message') }}
+        </div>
+    @endif
 
-<h1>Posts</h1>
-@foreach ($posts as $post)
-    <p> 
-        {{ $post->title }} 
-        [ <a href="{{ route('posts.show', $post->id) }}">Ver</a> |
-          <a href="{{ route('posts.edit', $post->id) }}">Editar</a> ] 
-    </p>
-@endforeach
+    <form action="{{ route('posts.search') }}" method="post">
+        @csrf
+        <input type="text" name="search" placeholder="Pesquisar">
+        <button type="submit">Pesquisar</button>
+    </form>
 
-<hr>
+    <h1>Posts</h1>
+    @foreach ($posts as $post)
+        <p> 
+            {{ $post->title }} 
+            [ <a href="{{ route('posts.show', $post->id) }}">Ver</a> |
+              <a href="{{ route('posts.edit', $post->id) }}">Editar</a> ] 
+        </p>
+    @endforeach
 
-{{-- Incluir paginação na view --}}
-@if (isset($filters))
-    {{ $posts->appends($filters)->links() }}    
-@else
-    {{ $posts->links() }}
-@endif
+    <hr>
+
+    {{-- Incluir paginação na view --}}
+    @if (isset($filters))
+        {{ $posts->appends($filters)->links() }}    
+    @else
+        {{ $posts->links() }}
+    @endif
+
+@endsection
