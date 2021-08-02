@@ -5,9 +5,7 @@
     <li><strong>Conteúdo: </strong>{{ $post->content }}</li>
 </ul>
 
-<form action="{{ route('posts.edit', $post->id) }}" method="post">
-    @csrf
-    @method('put')
+<form action="{{ route('posts.edit', $post->id) }}">
     <button type="submit">Editar</button>
 </form>
 
