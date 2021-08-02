@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUpdatePost;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class PostController extends Controller
 {
@@ -21,7 +23,17 @@ class PostController extends Controller
 
     public function store(StoreUpdatePost $request)
     {
-        $post = Post::create($request->all());
+        $data = $request->all();
+        if ($request->image->isValid()){
+
+            $nameFile = Str::of($request->title)->slug('-') . '.' .$request->image->getClientOriginalExtension();
+
+            $image = $request->image->storeAs('public/posts', $nameFile);
+            $image = str_replace('public/', '', $image);
+            $data['image'] = $image;
+        }
+
+        $post = Post::create($data);
         return redirect()
                 ->route('posts.index')
                 ->with('message', 'Post criado com sucesso!');
@@ -41,6 +53,10 @@ class PostController extends Controller
         $post = Post::where('id', $id)->first();
         if (!$post)
             return redirect()->route('posts.index');
+
+        if (Storage::exists("public/{$post->image}"))
+            Storage::delete("public/{$post->image}");
+
         $post->delete();
         return redirect()
                 ->route('posts.index')
@@ -62,7 +78,20 @@ class PostController extends Controller
         if (!$post)
             return redirect()->route('posts.index');
         
-        $post->update($request->all());
+        $data = $request->all();
+        if ($request->image && $request->image->isValid()){
+
+            if (Storage::exists("public/{$post->image}"))
+                Storage::delete("public/{$post->image}");
+
+            $nameFile = Str::of($request->title)->slug('-') . '.' .$request->image->getClientOriginalExtension();
+
+            $image = $request->image->storeAs('public/posts', $nameFile);
+            $image = str_replace('public/', '', $image);
+            $data['image'] = $image;
+        }
+
+        $post->update($data);
 
         return redirect()
                 ->route('posts.index')

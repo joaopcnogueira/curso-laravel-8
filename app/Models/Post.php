@@ -12,5 +12,5 @@ class Post extends Model
     // indica a tabela que o model representa
     protected $table = 'posts';
 
-    protected $fillable = ['title', 'content'];
+    protected $fillable = ['title', 'image', 'content'];
 }
